@@ -639,6 +639,39 @@
     color: rgba(255,255,255,.25);
     text-align: center;
   }
+
+  /* ── Upcoming section toggle ── */
+  .upcoming-section { margin-bottom: 4px; }
+  .upcoming-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+    cursor: pointer;
+    user-select: none;
+    transition: background .15s;
+  }
+  .upcoming-toggle:hover { background: rgba(255,255,255,.04); }
+  .upcoming-toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255,255,255,.35);
+  }
+  .upcoming-toggle-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    border: 2px solid #fbbf24;
+    flex-shrink: 0;
+  }
+  .upcoming-toggle svg { transition: transform .2s; color: rgba(255,255,255,.25); }
+  .upcoming-toggle.open svg { transform: rotate(180deg); }
+  .upcoming-items { overflow: hidden; }
+  .upcoming-items.collapsed { display: none; }
 </style>
 </head>
 <body>
@@ -772,18 +805,62 @@ const RELEASES = [
     ]
   },
   { year:2026, id:'r3100', name:'v3.10.0', releaseDate:'2026-05-25', released:false,
-    desc:'Novo fluxo de criação de conta · Novo menu Área Pix · Novo fluxo de transferência Pix · Recálculo de impostos · Redesign de Impostos e taxas · Notificações Certificado PJ.',
+    desc:'Novo fluxo de criação de conta · Fluxo "Complete seu cadastro" · Onboarding (Primeiro acesso) · Nova Área Pix · Novo fluxo de transferência Pix · Adição de arquivos no prontuário · Recálculo de impostos e taxas · Redesign de impostos e taxas.',
     features:[
-      {title:'Novo fluxo de criação de conta', contexto:'', feito:'', impacto:''},
-      {title:'Novo menu Área Pix', contexto:'', feito:'', impacto:''},
-      {title:'Novo fluxo de transferência Pix', contexto:'', feito:'', impacto:''},
-      {title:'Recálculo de impostos', contexto:'', feito:'', impacto:''},
-      {title:'Redesign de Impostos e taxas', contexto:'', feito:'', impacto:''},
-      { title:'Notificações Certificado PJ',
-        jiraKey:'ONE-737',
-        contexto:'Usuários com contabilidade ativa não recebiam alertas quando o certificado digital estava próximo do vencimento, gerando risco de interrupção na emissão de notas fiscais.',
-        feito:'Push notifications automáticas nos prazos de 30, 15 e 7 dias antes do vencimento, no dia e nos 5 dias úteis após. Ao tocar, abre WhatsApp Hey Amigo! com mensagem pré-preenchida para renovação.',
-        impacto:'Usuários recebem alertas proativos sobre o vencimento do certificado, prevenindo interrupções no processo de emissão de notas fiscais.'
+      { title:'Novo fluxo de criação de conta',
+        jiraKey:'ONE-2',
+        contexto:'O fluxo de criação de conta do Amigo One era extenso, com cinco etapas e tempo médio de 3 a 5 minutos, gerando alto nível de atrito e abandono antes de completar o cadastro.',
+        feito:'Redesenho completo com quatro etapas simplificadas: dados de acesso (Nome, CPF, e-mail e senha), validação de e-mail por código, validação de telefone (WhatsApp por padrão ou SMS) e seleção do tipo de perfil (Profissional de saúde ou Estudante), seguido da validação biométrica pela Único. Barra de progresso visual ao longo de todo o fluxo. Dados pessoais e do conselho ficam para etapa pós-criação.',
+        impacto:'Todos os novos usuários do Amigo One terão uma entrada mais ágil — redução de atrito no cadastro, aumento de conversão e melhora na primeira experiência com o aplicativo.',
+        images:[
+          { src:'images/criacao-conta-antes.png', label:'Fluxo Antigo (5 etapas)' },
+          { src:'images/criacao-conta-novo.png',  label:'Novo Fluxo (4 etapas)'   }
+        ]
+      },
+      { title:'Fluxo "Complete seu cadastro"',
+        jiraKey:'ONE-122',
+        contexto:'O fluxo de cadastro do Amigo One coletava todas as informações do usuário de uma só vez, gerando atrito e abandono antes da conclusão. Dados como data de nascimento e informações do conselho bloqueavam o acesso imediato ao app.',
+        feito:'Criação do fluxo "Complete seu cadastro" em 3 etapas progressivas: dados de acesso (já preenchidos no cadastro inicial), dados pessoais (data de nascimento) e dados do conselho (profissionais) ou dados acadêmicos (estudantes). Acessível por card na home ou ao tentar usar funcionalidades bloqueadas. Progresso salvo por etapa e push notifications de lembrete a cada 7 dias enquanto incompleto. Funcionalidades como Rede Amigo, criação de pacientes e Agendamento Online ficam bloqueadas até a conclusão.',
+        impacto:'Novos usuários têm acesso imediato ao app com liberação gradual das funcionalidades conforme o perfil é completado, reduzindo o abandono no cadastro. Profissionais e estudantes têm fluxos específicos para seus dados.'
+      },
+      { title:'Onboarding (Primeiro acesso)',
+        jiraKey:'ONE-1',
+        contexto:'O Amigo One não possuía nenhum fluxo de onboarding para novos usuários, deixando-os sem contexto sobre as principais funcionalidades disponíveis logo após o cadastro.',
+        feito:'Desenvolvimento de um fluxo de onboarding com 5 etapas apresentadas no primeiro acesso: Boas-vindas, Agenda, Teleconsulta, Amigo Intelligence e Prontuário eletrônico & Assinatura digital. O usuário pode pular todas as etapas de uma vez pelo botão "Pular tudo" e navegar livremente entre as telas. O fluxo é exibido apenas no primeiro acesso.',
+        impacto:'Novos usuários do Amigo One terão uma experiência de entrada mais clara e contextualizada, compreendendo as funcionalidades disponíveis desde o início e reduzindo barreiras de adoção do aplicativo.'
+      },
+      { title:'Nova Área Pix',
+        jiraKey:'ONE-777',
+        contexto:'O Amigo Pay não tinha um hub centralizado para operações Pix. O usuário precisava navegar por menus separados para transferir, cobrar ou configurar chaves, tornando o fluxo fragmentado.',
+        feito:'Criação da Área Pix dentro do Amigo Pay com três seções unificadas: atalhos de pagamento (Transferir, Copia e Cola, QR Code, Cobrar), transações recentes (últimas 10, com atalho para repetir a transferência com dados pré-preenchidos) e configurações (gerenciamento de chaves Pix e limites de transferência). A Área Pix ocupa a 1ª posição no menu de atalhos do Amigo Pay.',
+        impacto:'Usuários do Amigo Pay têm acesso rápido e centralizado a todas as operações Pix, com visibilidade de transações recentes e possibilidade de repetir pagamentos em poucos toques.',
+        images:[
+          { src:'images/area-pix-comparacao.png', label:'Antes × Depois', single:true }
+        ]
+      },
+      { title:'Novo fluxo de transferência Pix',
+        jiraKey:'ONE-1213',
+        contexto:'O fluxo de transferência Pix do Amigo Pay estava desatualizado visualmente e com feedbacks de erro genéricos, sem alinhamento com a regulamentação Pix do Bacen, gerando confusão no usuário em casos de falha.',
+        feito:'Redesenho completo: inserção e identificação automática do tipo de chave Pix, tela de valor com saldo visível, tela de revisão com campos editáveis (valor e descrição), senha transacional e comprovante compartilhável em PDF. Tratamento de erros alinhado ao Bacen (chave expirada, conta indisponível, falha de processamento e falha de comunicação). CPF/CNPJ mascarado no comprovante.',
+        impacto:'Usuários realizam transferências Pix com mais segurança e clareza, com feedbacks precisos em cada etapa e menos dúvidas sobre o status do pagamento.'
+      },
+      { title:'Adição de arquivos no prontuário',
+        jiraKey:'ONE-1077',
+        contexto:'O prontuário do paciente no Amigo One permitia apenas a adição de imagens, limitando a capacidade dos profissionais de registrar informações completas sobre os seus pacientes.',
+        feito:'Ampliação do fluxo de adição de arquivos no prontuário com suporte a três tipos de conteúdo: imagens (JPG e PNG), vídeos (MP4, MOV e HEVC) e documentos (PDF). O novo fluxo permite pré-visualização dos arquivos antes de salvar, remoção de itens selecionados e feedbacks visuais de erro durante o processo de upload.',
+        impacto:'Profissionais de saúde poderão registrar informações de forma mais completa no prontuário, incluindo exames em PDF e vídeos clínicos, melhorando a qualidade dos registros e o acompanhamento dos pacientes.'
+      },
+      { title:'Recálculo de impostos e taxas',
+        jiraKey:'ONE-1147',
+        contexto:'Quando um cliente contábil do Amigo One precisava regularizar um imposto atrasado (DAS ou DARF), o recálculo do boleto precisava ser solicitado manualmente via WhatsApp, gerando atrito e dependência do time de atendimento.',
+        feito:'Implementação de um fluxo de recálculo e emissão de boleto atualizado diretamente no app: o cliente seleciona uma nova data de vencimento em calendário com regras de negócio (sem retroativos, fins de semana, feriados ou meses futuros) e confirma a emissão do boleto com juros e multas já calculados. Casos especiais (boletos manuais ou fora do range permitido) redirecionam para o WhatsApp com mensagem pré-pronta.',
+        impacto:'Clientes contábeis com impostos atrasados poderão regularizar suas obrigações fiscais de forma autônoma, sem acionar o suporte. Redução de fricção no processo de regularização e melhora na experiência do módulo contábil.'
+      },
+      { title:'Redesign — Listagem de impostos e taxas',
+        jiraKey:'ONE-1148',
+        contexto:'A listagem e o detalhamento de impostos e taxas do módulo contábil estavam desatualizados visualmente e não ofereciam filtragem adequada nem visibilidade clara sobre obrigações pendentes, atrasadas e pagas.',
+        feito:'Redesign completo da tela de obrigações fiscais: listagem agrupada por competência, chips de filtro (Todas em aberto, Atrasadas e Pagas), filtro por mês/ano, valor total automático no header e empty states para cada situação. Detalhamento de cada obrigação exibe valor base, multas, juros, código de barras, link do boleto e toggle "Marcar como pago". Botão "Pagar com Amigo Pay" para pendentes e "Emitir boleto atualizado" para atrasadas.',
+        impacto:'Usuários contábeis terão uma visão mais clara e organizada de suas obrigações fiscais, com controle sobre impostos pendentes, atrasados e pagos sem precisar sair do app, reduzindo a dependência de suporte externo.'
       }
     ]
   },
@@ -961,38 +1038,71 @@ const RELEASES = [
 let currentIdx = null;
 let filteredList = [...RELEASES];
 
+/* ── Build release item ── */
+function createReleaseItem(r) {
+  const item = document.createElement('div');
+  item.className = 'release-item' + (currentIdx === r.id ? ' active' : '');
+  item.dataset.id = r.id;
+  item.innerHTML = `
+    <div class="ri-dot ${r.released ? 'released' : 'upcoming'}"></div>
+    <div class="ri-info">
+      <div class="ri-version">${r.name}</div>
+      <div class="ri-date">${fmt(r.releaseDate)}</div>
+    </div>
+    <span class="ri-badge ${r.released ? 'badge-released' : 'badge-upcoming'}">
+      ${r.released ? 'Live' : 'Soon'}
+    </span>`;
+  item.addEventListener('click', () => selectRelease(r.id));
+  return item;
+}
+
 /* ── Build sidebar ── */
 function buildSidebar(list) {
   const nav = document.getElementById('sidebarList');
-  const years = [...new Set(list.map(r => r.year))].sort((a,b)=>b-a);
   nav.innerHTML = '';
 
   if (list.length === 0) {
     nav.innerHTML = '<div class="no-result">Nenhuma release encontrada</div>';
+    document.getElementById('totalBadge').textContent = '0 releases';
     return;
   }
 
+  const upcoming = list.filter(r => !r.released);
+  const released = list.filter(r => r.released);
+
+  /* ── Seção "Próximas" (colapsada por padrão) ── */
+  if (upcoming.length > 0) {
+    const section = document.createElement('div');
+    section.className = 'upcoming-section';
+    const toggle = document.createElement('div');
+    toggle.className = 'upcoming-toggle';
+    toggle.innerHTML = `
+      <span class="upcoming-toggle-label">
+        <span class="upcoming-toggle-dot"></span>
+        Próximas (${upcoming.length})
+      </span>
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>`;
+    const items = document.createElement('div');
+    items.className = 'upcoming-items collapsed';
+    upcoming.forEach(r => items.appendChild(createReleaseItem(r)));
+    toggle.addEventListener('click', () => {
+      const isOpen = toggle.classList.contains('open');
+      toggle.classList.toggle('open', !isOpen);
+      items.classList.toggle('collapsed', isOpen);
+    });
+    section.appendChild(toggle);
+    section.appendChild(items);
+    nav.appendChild(section);
+  }
+
+  /* ── Seção "Lançadas" (por ano) ── */
+  const years = [...new Set(released.map(r => r.year))].sort((a,b)=>b-a);
   years.forEach(y => {
-    const group = list.filter(r => r.year === y);
+    const group = released.filter(r => r.year === y);
     const div = document.createElement('div');
     div.className = 'year-group';
     div.innerHTML = `<div class="year-label">${y}</div>`;
-    group.forEach(r => {
-      const item = document.createElement('div');
-      item.className = 'release-item' + (currentIdx === r.id ? ' active' : '');
-      item.dataset.id = r.id;
-      item.innerHTML = `
-        <div class="ri-dot ${r.released ? 'released' : 'upcoming'}"></div>
-        <div class="ri-info">
-          <div class="ri-version">${r.name}</div>
-          <div class="ri-date">${fmt(r.releaseDate)}</div>
-        </div>
-        <span class="ri-badge ${r.released ? 'badge-released' : 'badge-upcoming'}">
-          ${r.released ? 'Live' : 'Soon'}
-        </span>`;
-      item.addEventListener('click', () => selectRelease(r.id));
-      div.appendChild(item);
-    });
+    group.forEach(r => div.appendChild(createReleaseItem(r)));
     nav.appendChild(div);
   });
 
@@ -1063,7 +1173,7 @@ function selectRelease(id) {
         <div class="features-row">
           ${r.features.map(f => {
             const t = typeof f === 'string' ? f : f.title;
-            return `<span class="ftag">${t.split(' ').slice(0,4).join(' ')}</span>`;
+            return `<span class="ftag">${t}</span>`;
           }).join('')}
         </div>
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
@@ -1077,33 +1187,49 @@ function selectRelease(id) {
             const hasDetails = isObj && (f.contexto || f.feito || f.impacto);
             const actionLabel = r.released ? 'O que foi feito' : 'O que será feito';
             const chevronSvg = `<svg class="feat-chevron" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m6 9 6 6 6-6"/></svg>`;
-            const imgRow = `
-              <div class="feat-img-row">
-                <div class="feat-img-frame">
-                  <div class="feat-frame-bar">
-                    <div class="feat-frame-dot fd-red"></div>
-                    <div class="feat-frame-dot fd-yellow"></div>
-                    <div class="feat-frame-dot fd-green"></div>
-                  </div>
-                  <div class="feat-frame-label">Antes</div>
-                  <div class="feat-frame-placeholder">
-                    <div class="feat-placeholder-icon">🖼️</div>
-                    <div class="feat-placeholder-text">Screenshot — estado anterior</div>
-                  </div>
+            // Gera linha de imagens: usa imagens reais se fornecidas, senão placeholder
+            function buildImgFrame(src, label, isSingle) {
+              const width = isSingle ? '100%' : '';
+              return `<div class="feat-img-frame" style="${isSingle ? 'width:100%;' : ''}">
+                <div class="feat-frame-bar">
+                  <div class="feat-frame-dot fd-red"></div>
+                  <div class="feat-frame-dot fd-yellow"></div>
+                  <div class="feat-frame-dot fd-green"></div>
                 </div>
-                <div class="feat-img-frame">
-                  <div class="feat-frame-bar">
-                    <div class="feat-frame-dot fd-red"></div>
-                    <div class="feat-frame-dot fd-yellow"></div>
-                    <div class="feat-frame-dot fd-green"></div>
-                  </div>
-                  <div class="feat-frame-label">${r.released ? 'Depois' : 'Prévia'}</div>
+                <div class="feat-frame-label">${label}</div>
+                ${src ? `
+                  <img src="${src}" alt="${label}" style="width:100%;display:block;object-fit:contain;max-height:400px;"
+                    onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                  <div class="feat-frame-placeholder" style="display:none;">
+                    <div class="feat-placeholder-icon">🖼️</div>
+                    <div class="feat-placeholder-text">${label}<br><small style="opacity:.6">Arquivo não encontrado: ${src}</small></div>
+                  </div>` : `
                   <div class="feat-frame-placeholder">
                     <div class="feat-placeholder-icon">${r.released ? '✨' : '🎨'}</div>
-                    <div class="feat-placeholder-text">${r.released ? 'Screenshot — novo estado' : 'Protótipo / design'}</div>
-                  </div>
-                </div>
+                    <div class="feat-placeholder-text">${label}</div>
+                  </div>`}
               </div>`;
+            }
+
+            let imgRowContent;
+            if (isObj && f.images && f.images.length > 0) {
+              if (f.images.length === 1 && f.images[0].single) {
+                // imagem única (comparação lado a lado embutida na própria imagem)
+                imgRowContent = `<div class="feat-img-row" style="grid-template-columns:1fr;">
+                  ${buildImgFrame(f.images[0].src, f.images[0].label, true)}
+                </div>`;
+              } else {
+                imgRowContent = `<div class="feat-img-row">
+                  ${f.images.map(img => buildImgFrame(img.src, img.label, false)).join('')}
+                </div>`;
+              }
+            } else {
+              imgRowContent = `<div class="feat-img-row">
+                ${buildImgFrame(null, 'Antes', false)}
+                ${buildImgFrame(null, r.released ? 'Depois' : 'Prévia', false)}
+              </div>`;
+            }
+            const imgRow = imgRowContent;
             const bodyHtml = isObj ? `
               <div class="feat-body">
                 ${hasDetails ? `
@@ -1151,11 +1277,15 @@ function selectRelease(id) {
   });
 }
 
-/* ── Accordion toggle ── */
+/* ── Accordion toggle (exclusive — fecha os outros ao abrir) ── */
 function toggleFeat(id) {
   const el = document.getElementById(id);
   if (!el) return;
   const isOpen = el.classList.contains('open');
+  // fecha todos os outros abertos
+  document.querySelectorAll('.feat-item.open').forEach(item => {
+    if (item.id !== id) item.classList.remove('open');
+  });
   el.classList.toggle('open', !isOpen);
 }
 
